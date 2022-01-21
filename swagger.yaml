@@ -1,0 +1,141 @@
+openapi: 3.0.0
+info:
+  title: Users API
+  version: 1.0.0
+  description: A simple express library API
+servers:
+  - url: http://localhost:3000
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: auto-generated id of an user
+        name:
+          type: string
+          description: the name of an user
+        email:
+          type: string
+          description: the email of an user
+      required:
+        - name
+        - email
+      example:
+        id: H9054JhJgea6mVuSiy20F
+        name: Jhon Doe
+        email: jhonDoe@myMail.com
+    UserNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          description: user was not found
+      example:
+        message: a message for the not found user
+  parameters:
+    id:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: the user id
+tags:
+  - name: User
+    description: User API
+paths:
+  /users:
+    get:
+      summary: Returns all users from the databse
+      tags: [User]
+      responses:
+        '200':
+          description: users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /user/{id}:
+    get:
+      summary: get an user specified by id
+      tags: [User]
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: user was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: user was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+    delete:
+      summary: delete an user by id
+      tags: [User]
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: the user was deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: the user was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+    put:
+      summary: Update an user
+      tags: [User]
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: the user updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404': 
+          description: the user was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+  /user:
+    post:
+      summary: Create an user
+      tags: [User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: the user successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: some server error
